@@ -26,7 +26,7 @@ export const minikitConfig = {
     webhookUrl: `${ROOT_URL}/api/webhook`,
     primaryCategory: "games",
     tags: ["nft", "minting", "price-tracking", "blockchain"],
-    heroImageUrl: `https://upload.wikimedia.org/wikipedia/commons/8/8e/OOjs_UI_icon_image.svg`,
+    heroImageUrl: `${ROOT_URL}/memes/doge1.png`,
     tagline: "Mint NFTs capturing live ETH prices",
     ogTitle: "Base NFT Mint - Live ETH Price NFTs",
     ogDescription: "Mint unique NFTs that capture the exact ETH price at the moment of minting",
