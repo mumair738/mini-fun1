@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { useQuickAuth,useMiniKit } from "@coinbase/onchainkit/minikit";
 import { useRouter } from "next/navigation";
 import { minikitConfig } from "../minikit.config";
+import { sdk } from '@farcaster/miniapp-sdk';
 import styles from "./page.module.css";
 
 interface AuthResponse {
@@ -22,11 +23,13 @@ export default function Home() {
   const [error, setError] = useState("");
   const router = useRouter();
 
-  // Initialize the  miniapp
+  // Initialize the miniapp
   useEffect(() => {
     if (!isFrameReady) {
       setFrameReady();
     }
+    // Trigger app display once ready
+    sdk.actions.ready({ disableNativeGestures: true });
   }, [setFrameReady, isFrameReady]);
  
   
