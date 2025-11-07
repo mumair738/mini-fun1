@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import { Inter, Source_Code_Pro } from "next/font/google";
-import { SafeArea } from "@coinbase/onchainkit/minikit";
+import { OnchainKitProvider } from "@coinbase/onchainkit";
+import { base } from "wagmi/chains";
 import { minikitConfig } from "../minikit.config";
+import Providers from "./providers";
 import "./globals.css";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -69,8 +71,6 @@ const sourceCodePro = Source_Code_Pro({
   subsets: ["latin"],
 });
 
-import Providers from "./providers";
-
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -79,11 +79,15 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${inter.variable} ${sourceCodePro.variable}`}>
-        <Providers>
-          <SafeArea>
-            {children}
-          </SafeArea>
-        </Providers>
+        <OnchainKitProvider
+          apiKey={process.env.NEXT_PUBLIC_ONCHAINKIT_API_KEY || ""}
+          chain={base}
+          miniKit={{
+            enabled: true, // ✅ THIS IS REQUIRED
+          }}
+        >
+          <Providers>{children}</Providers>
+        </OnchainKitProvider>
       </body>
     </html>
   );
