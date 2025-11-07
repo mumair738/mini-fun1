@@ -1,7 +1,6 @@
 "use client";
 import "@rainbow-me/rainbowkit/styles.css";
 import {
-  getDefaultConfig,
   RainbowKitProvider,
   lightTheme,
 } from "@rainbow-me/rainbowkit";
