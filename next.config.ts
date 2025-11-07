@@ -5,6 +5,9 @@ const nextConfig: NextConfig = {
     config.externals.push("pino-pretty", "lokijs", "encoding");
     return config;
   },
+  images: {
+    domains: ["cdn-icons-png.flaticon.com"],
+  },
 };
 
 export default nextConfig;
