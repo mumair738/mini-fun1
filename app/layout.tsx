@@ -9,12 +9,33 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     title: minikitConfig.miniapp.name,
     description: minikitConfig.miniapp.description,
-    other: {
+    openGraph: {
+      title: "🪙 Mini Fun Flip - Win Real ZORA Tokens for FREE!",
+      description: "🎁 Free-to-play crypto game • 🏆 Win 0.0001 ZORA tokens • 💰 $100 winning pot • 📅 Max 2 flips per day",
+      url: "https://mini-fun1.vercel.app",
+      siteName: "Mini Fun Flip",
+      images: [
+        {
+          url: "/doge1.png",
+          width: 1200,
+          height: 630,
+          alt: "Mini Fun Flip - Win Real ZORA Tokens",
+        },
+      ],
+      locale: "en_US",
+      type: "website",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: "🪙 Mini Fun Flip - Win Real ZORA Tokens for FREE!",
+      description: "🎁 Free-to-play crypto game • 🏆 Win 0.0001 ZORA tokens • 💰 $100 winning pot",
+      images: ["/doge1.png"],
+    },other: {
       "fc:frame": JSON.stringify({
         version: "1",
         imageUrl: minikitConfig.miniapp.heroImageUrl,
         button: {
-          title: `Join the ${minikitConfig.miniapp.name} Waitlist`,
+          title: `Let's Flip!`,
           action: {
             name: `Launch ${minikitConfig.miniapp.name}`,
             type: "launch_frame",
@@ -25,7 +46,7 @@ export async function generateMetadata(): Promise<Metadata> {
         version: '1',
         imageUrl: minikitConfig.miniapp.heroImageUrl,
         button: {
-          title: `Launch ${minikitConfig.miniapp.name}`,
+          title: `Let's Flip!`,
           action: {
             type: 'launch_miniapp',
             name: minikitConfig.miniapp.name,

@@ -1,0 +1,20 @@
+# This is a placeholder for the OpenGraph image
+# In a real implementation, you would create a proper 1200x630 PNG image
+# For now, I'll provide instructions on how to create one
+
+# Open Graph Image Requirements:
+# - Size: 1200x630 pixels
+# - Format: PNG
+# - Shows the app name "Mini Fun Flip"
+# - Shows the $100 winning banner
+# - Shows the Zora tokens reward
+# - Eye-catching design that represents a crypto game
+
+# You can create this image using:
+# - Canva (with crypto/gaming templates)
+# - Photoshop or GIMP
+# - Figma
+# - Any graphic design tool
+
+# The image should be saved as: /public/og-image.png
+# This will be automatically used by social media platforms when sharing

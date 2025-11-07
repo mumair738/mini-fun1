@@ -1,6 +1,7 @@
 {
-  "version": 2,
-  "routes": [
-    { "src": "/(.*)", "dest": "/" }
-  ]
+  "functions": {
+    "app/api/**/*.ts": {
+      "maxDuration": 30
+    }
+  }
 }
