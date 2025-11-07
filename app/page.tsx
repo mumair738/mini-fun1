@@ -1,172 +1,86 @@
 "use client";
-import { useState, useEffect } from "react";
-import Image from "next/image";
-import { useMiniKit } from "@coinbase/onchainkit/minikit";
-import { sdk } from '@farcaster/miniapp-sdk';
-import FarcasterWalletConnect from "../components/FarcasterWalletConnect";
-import styles from "./page.module.css";
 
+import { ConnectButton } from "@rainbow-me/rainbowkit";
+import Image from "next/image";
+import { useAccount, useDisconnect } from "wagmi";
+import { useState } from "react";
 
 export default function Home() {
-  const { isFrameReady, setFrameReady } = useMiniKit();
-  const [isFlipping, setIsFlipping] = useState(false);
-  const [result, setResult] = useState<{win: boolean, amount?: string, txHash?: string, remainingFlips?: number} | null>(null);
-  const [error, setError] = useState<string | null>(null);
-  // const [userAddress, setUserAddress] = useState<string>('');
-  const userAddress = ''; // Temporary placeholder - will be replaced with actual wallet address
-  const [remainingFlips, setRemainingFlips] = useState<number>(2);
+  const { address, isConnected } = useAccount();
+  const { disconnect } = useDisconnect();
+  const [flips, setFlips] = useState(2);
 
-  // Initialize the miniapp
-  useEffect(() => {
-    if (!isFrameReady) {
-      setFrameReady();
-    }
-    // Trigger app display once ready
-    sdk.actions.ready({ disableNativeGestures: true });
-  }, [setFrameReady, isFrameReady]);
-
-  // Update userAddress when wallet connects
-  useEffect(() => {
-    const handleWalletConnect = () => {
-      // Get connected wallet address from wagmi
-      // This will be handled by the wallet connect component
-      console.log('Wallet connection state changed');
-    };
-
-    handleWalletConnect();
-  }, []);
-
-  const handleFlip = async () => {
-    if (!userAddress) {
-      setError('Please connect your wallet first');
+  const handleFlip = () => {
+    if (!isConnected) {
+      alert("⚠️ Please connect your wallet first!");
       return;
     }
-
-    setIsFlipping(true);
-    setResult(null);
-    setError(null);
-    
-    try {
-      console.log('Flipping for user:', userAddress);
-      
-      const response = await fetch('/api/flip', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ userAddress }),
-      });
-
-      const data = await response.json();
-      
-      if (!response.ok) {
-        if (response.status === 429) {
-          setError(data.message || 'Daily limit reached');
-          setRemainingFlips(data.remaining || 0);
-        } else {
-          setError(data.error || 'Flip failed');
-        }
-        return;
-      }
-
-      setResult({
-        win: data.win,
-        amount: data.amount,
-        txHash: data.txHash,
-        remainingFlips: data.remainingFlips
-      });
-      
-      if (data.remainingFlips !== undefined) {
-        setRemainingFlips(data.remainingFlips);
-      }
-      
-    } catch (error) {
-      console.error('Flip error:', error);
-      setError('Network error. Please try again.');
+    if (flips <= 0) {
+      alert("You’ve reached max flips for today!");
+      return;
     }
-    
-    setIsFlipping(false);
+    setFlips(flips - 1);
+    alert("🎉 You flipped and won 0.0001 ZORA tokens!");
   };
 
   return (
-    <div className={styles.container}>
-      <div className={styles.content}>
-        <div className={styles.gameTitle}>
-          <div>Flip win upto 100$</div>
-          {/* Next.js Image component for better performance */}
-          <Image
-            src="/hero.png"
-            alt="Hero Image"
-            width={300}
-            height={200}
-            style={{
-              borderRadius: '12px',
-              marginTop: '10px',
-              boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
-              maxWidth: '100%',
-              height: 'auto'
-            }}
-          />
-        </div>
-        
-        {/* Wallet Connect Component - Always Visible */}
-        <div style={{ margin: '15px 0' }}>
-          <FarcasterWalletConnect />
-        </div>
-        
-        <div className={styles.balance}>
-          Remaining Flips Today: {remainingFlips}/2
-        </div>
-        
-        {/* Animated Meme Grid */}
-        <div className={styles.memeGrid}>
-          {['🐕', '🐱', '😎', '🚀', '💎', '🔥'].map((emoji, index) => (
-            <div key={index} className={styles.memeCard} style={{animationDelay: `${index * 0.1}s`}}>
-              {emoji}
-            </div>
-          ))}
-        </div>
-        
-        <button
-          onClick={handleFlip}
-          disabled={isFlipping || remainingFlips === 0}
-          className={styles.flipButton}
-        >
-          {isFlipping ? 'Flipping...' : remainingFlips === 0 ? 'Daily Limit Reached' : 'FLIP (FREE)'}
-        </button>
-        
-        {error && (
-          <div className={styles.resultBox}>
-            ⚠️ {error}
-          </div>
-        )}
-        
-        {result && (
-          <div className={`${styles.resultBox} ${result.win ? styles.winResult : styles.loseResult}`}>
-            {result.win ? (
-              <>
-                🎉 You WON +{result.amount} ZORA tokens!
-                {result.txHash && (
-                  <div style={{fontSize: '12px', marginTop: '5px', opacity: 0.8}}>
-                    TX: {result.txHash.slice(0, 10)}...
-                  </div>
-                )}
-              </>
-            ) : (
-              '😢 You lost! No tokens sent. Better luck next time!'
-            )}
-            {result.remainingFlips !== undefined && (
-              <div style={{fontSize: '12px', marginTop: '5px', opacity: 0.8}}>
-                {result.remainingFlips} flips remaining today
-              </div>
-            )}
-          </div>
-        )}
-        
-        <div className={styles.infoText}>
-          🎁 Free to play • Win 0.0001 ZORA tokens • Max 2 flips per day
-        </div>
+    <div className="flex flex-col items-center justify-center min-h-screen gap-6">
+      <h1 className="text-3xl font-bold mt-6">Flip win upto 100$</h1>
+
+      {/* ✅ Replaced Placeholder with Dog Image */}
+      <div className="bg-black rounded-xl p-4">
+        <Image
+          src="/dog.png"
+          alt="Dog Banner"
+          width={200}
+          height={200}
+          className="rounded-xl"
+        />
       </div>
+
+      <div className="mt-4 flex flex-col items-center gap-2 text-center">
+        <div className="text-yellow-400">🪙 Connect Your Wallet</div>
+        <ConnectButton />
+        {isConnected && (
+          <>
+            <div className="text-sm mt-2">
+              Connected Wallet:{" "}
+              <span className="font-mono bg-gray-900 px-2 py-1 rounded">
+                {address?.slice(0, 6)}...{address?.slice(-4)}
+              </span>
+            </div>
+            <button
+              onClick={() => disconnect()}
+              className="text-xs underline text-gray-200 mt-1"
+            >
+              Disconnect
+            </button>
+          </>
+        )}
+      </div>
+
+      <div className="text-xs opacity-80 mt-2">
+        Remaining Flips Today: {flips}/2
+      </div>
+
+      {/* Flip Buttons */}
+      <div className="flex gap-2 text-3xl">
+        <span>🐶</span>
+        <span>🚀</span>
+        <span>🔥</span>
+        <span>💎</span>
+      </div>
+
+      <button
+        onClick={handleFlip}
+        className="mt-4 bg-yellow-400 text-black font-bold px-6 py-2 rounded-xl hover:bg-yellow-300 transition-all"
+      >
+        FLIP (FREE)
+      </button>
+
+      <p className="text-xs opacity-70 mt-4">
+        🪙 Free to play • Win 0.0001 ZORA tokens • Max 2 flips per day
+      </p>
     </div>
   );
 }

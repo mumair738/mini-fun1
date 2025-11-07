@@ -70,18 +70,22 @@ const sourceCodePro = Source_Code_Pro({
   subsets: ["latin"],
 });
 
+import { Providers } from "./providers";
+
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   return (
-    <RootProvider>
-      <html lang="en">
-        <body className={`${inter.variable} ${sourceCodePro.variable}`}>
-          <SafeArea>{children}</SafeArea>
-        </body>
-      </html>
-    </RootProvider>
+    <html lang="en">
+      <body className={`${inter.variable} ${sourceCodePro.variable}`}>
+        <Providers>
+          <SafeArea>
+            {children}
+          </SafeArea>
+        </Providers>
+      </body>
+    </html>
   );
 }
