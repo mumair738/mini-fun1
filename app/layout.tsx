@@ -70,7 +70,7 @@ const sourceCodePro = Source_Code_Pro({
   subsets: ["latin"],
 });
 
-import { Providers } from "./providers";
+import Providers from "./providers";
 
 export default function RootLayout({
   children,
