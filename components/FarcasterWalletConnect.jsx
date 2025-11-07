@@ -113,15 +113,15 @@ function ConnectButtons() {
           <div className="wallet-option-content">
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
               <Image
-                src={`/logo.png`}
-                alt={`${connector.name} logo`}
+                src={`/dog.png`}
+                alt={`${connector.name} placeholder`}
                 width={24}
                 height={24}
                 style={{
                   borderRadius: '4px'
                 }}
                 onError={() => {
-                  // Fallback will be handled by Next.js Image component
+                  // Fallback to a simple colored square if image fails
                 }}
               />
               <div className="wallet-option-info">
