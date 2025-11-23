@@ -1,6 +1,14 @@
 import { ethers } from 'ethers';
 
-// ERC-20 Token ABI (simplified)
+const { RPC_URL, PRIVATE_KEY, TOKEN_ADDRESS } = process.env;
+
+if (!RPC_URL || !PRIVATE_KEY || !TOKEN_ADDRESS) {
+  throw new Error("Missing required environment variables");
+}
+
+const provider = new ethers.JsonRpcProvider(RPC_URL);
+const wallet = new ethers.Wallet(PRIVATE_KEY, provider);
+
 const TOKEN_ABI = [
   'function transfer(address to, uint256 amount) external returns (bool)',
   'function balanceOf(address account) external view returns (uint256)',
@@ -8,23 +16,19 @@ const TOKEN_ABI = [
   'function symbol() external view returns (string)',
 ];
 
-// Initialize provider and wallet
-const provider = new ethers.JsonRpcProvider(process.env.RPC_URL);
-const wallet = new ethers.Wallet(process.env.PRIVATE_KEY!, provider);
-
-// Initialize token contract
-const tokenAddress = process.env.TOKEN_ADDRESS!;
-const tokenContract = new ethers.Contract(tokenAddress, TOKEN_ABI, wallet);
+const tokenContract = new ethers.Contract(TOKEN_ADDRESS, TOKEN_ABI, wallet);
 
 export class BlockchainService {
+  
   static async getTokenBalance(address: string): Promise<string> {
     try {
-      const balance = await tokenContract.balanceOf(address);
-      const decimals = await tokenContract.decimals();
-      const symbol = await tokenContract.symbol();
-      
-      const formattedBalance = ethers.formatUnits(balance, decimals);
-      return `${formattedBalance} ${symbol}`;
+      const [balance, decimals, symbol] = await Promise.all([
+        tokenContract.balanceOf(address),
+        tokenContract.decimals(),
+        tokenContract.symbol(),
+      ]);
+
+      return `${ethers.formatUnits(balance, decimals)} ${symbol}`;
     } catch (error) {
       console.error('Error getting token balance:', error);
       return 'Error fetching balance';
@@ -33,21 +37,16 @@ export class BlockchainService {
 
   static async sendTokens(to: string, amount: string): Promise<string> {
     try {
-      console.log(`Sending ${amount} tokens to ${to}`);
-      
-      // Convert amount to wei (assuming 18 decimals for Zora token)
-      const amountWei = ethers.parseUnits(amount, 18);
-      
-      // Send the transaction
+      const decimals = await tokenContract.decimals();
+      const amountWei = ethers.parseUnits(amount, decimals);
+
       const tx = await tokenContract.transfer(to, amountWei);
-      
-      console.log('Transaction sent:', tx.hash);
-      
-      // Wait for confirmation
-      const receipt = await tx.wait();
-      console.log('Transaction confirmed:', receipt?.hash);
-      
-      return receipt?.hash || tx.hash;
+      console.log("Transaction sent:", tx.hash);
+
+      const receipt = await tx.wait(1);
+      console.log("Transaction confirmed:", receipt.hash);
+
+      return receipt.hash;
     } catch (error) {
       console.error('Error sending tokens:', error);
       throw new Error('Failed to send tokens');
@@ -57,8 +56,7 @@ export class BlockchainService {
   static async getWalletBalance(): Promise<string> {
     try {
       const balance = await provider.getBalance(wallet.address);
-      const ethBalance = ethers.formatEther(balance);
-      return `${ethBalance} ETH`;
+      return `${ethers.formatEther(balance)} ETH`;
     } catch (error) {
       console.error('Error getting wallet balance:', error);
       return 'Error fetching balance';
