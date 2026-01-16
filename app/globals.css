@@ -58,3 +58,37 @@
     }
   }
 }
+
+/* Coin Flip Animation */
+@keyframes coinFlip {
+  0% {
+    transform: rotateY(0deg);
+  }
+  100% {
+    transform: rotateY(1800deg);
+  }
+}
+
+.coin-flip {
+  animation: coinFlip 1.5s ease-in-out;
+  display: inline-block;
+}
+
+/* Twitter Share Button */
+.twitter-share-btn {
+  background: #1DA1F2;
+  color: white;
+  font-weight: bold;
+  padding: 8px 16px;
+  border-radius: 20px;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: background 0.2s;
+}
+
+.twitter-share-btn:hover {
+  background: #0d8bd9;
+}

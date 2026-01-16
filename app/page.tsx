@@ -9,18 +9,42 @@ export default function Home() {
   const { address, isConnected } = useAccount();
   const { disconnect } = useDisconnect();
   const [flips, setFlips] = useState(2);
+  const [isFlipping, setIsFlipping] = useState(false);
+  const [lastResult, setLastResult] = useState<'win' | 'lose' | null>(null);
 
-  const handleFlip = () => {
+  const handleFlip = async () => {
     if (!isConnected) {
       alert("⚠️ Please connect your wallet first!");
       return;
     }
     if (flips <= 0) {
-      alert("You’ve reached max flips for today!");
+      alert("You've reached max flips for today!");
       return;
     }
-    setFlips(flips - 1);
-    alert("🎉 You flipped and won 0.0001 ZORA tokens!");
+    if (isFlipping) return;
+
+    setIsFlipping(true);
+    setLastResult(null);
+
+    // Simulate flip with animation duration
+    setTimeout(() => {
+      const win = Math.random() > 0.7; // 30% win rate
+      setFlips(flips - 1);
+      setLastResult(win ? 'win' : 'lose');
+      setIsFlipping(false);
+      
+      if (win) {
+        alert("🎉 You won 0.0001 ZORA tokens!");
+      } else {
+        alert("😢 Better luck next time!");
+      }
+    }, 1500);
+  };
+
+  const handleShareTwitter = () => {
+    const tweetText = encodeURIComponent("I just won ZORA tokens on Mini-Fun! 🎉🪙 Try your luck too!");
+    const url = `https://twitter.com/intent/tweet?text=${tweetText}`;
+    window.open(url, '_blank', 'width=550,height=420');
   };
 
   return (
@@ -63,7 +87,14 @@ export default function Home() {
         Remaining Flips Today: {flips}/2
       </div>
 
-      {/* Flip Buttons */}
+      {/* Coin Flip Animation */}
+      <div className="flex gap-2 text-5xl">
+        <span className={isFlipping ? 'coin-flip' : ''}>
+          {isFlipping ? '🪙' : lastResult === 'win' ? '🎉' : lastResult === 'lose' ? '😢' : '🪙'}
+        </span>
+      </div>
+
+      {/* Emoji Row */}
       <div className="flex gap-2 text-3xl">
         <span>🐶</span>
         <span>🚀</span>
@@ -73,10 +104,26 @@ export default function Home() {
 
       <button
         onClick={handleFlip}
-        className="mt-4 bg-yellow-400 text-black font-bold px-6 py-2 rounded-xl hover:bg-yellow-300 transition-all"
+        disabled={isFlipping}
+        className={`mt-4 bg-yellow-400 text-black font-bold px-6 py-2 rounded-xl transition-all ${
+          isFlipping ? 'opacity-50 cursor-not-allowed' : 'hover:bg-yellow-300'
+        }`}
       >
-        FLIP (FREE)
+        {isFlipping ? 'FLIPPING...' : 'FLIP (FREE)'}
       </button>
+
+      {/* Twitter Share Button - Only shows after winning */}
+      {lastResult === 'win' && (
+        <button
+          onClick={handleShareTwitter}
+          className="twitter-share-btn"
+        >
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+          </svg>
+          Share Win on X
+        </button>
+      )}
 
       <p className="text-xs opacity-70 mt-4">
         🪙 Free to play • Win 0.0001 ZORA tokens • Max 2 flips per day
